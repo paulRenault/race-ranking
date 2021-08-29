@@ -6,6 +6,16 @@ describe('Test race constructor', () => {
             const race = new Race('race1');
             expect(race.name).toBe('race1');
         });
+
+        it('Should set startDate to null', () => {
+            const race = new Race('race1');
+            expect(race.startDate).toBeNull();
+        });
+
+        it('Should set racers to an empty array', () => {
+            const race = new Race('race1');
+            expect(race.racerTab).toStrictEqual([]);
+        });
     });
 
     describe('When param categories is undefined', () => {
@@ -168,5 +178,13 @@ describe('Test static checkCategories', () => {
 
             expect(Race.checkCategories(categories)).toStrictEqual(expectedObj);
         });
+    });
+});
+
+describe('Test race.start', () => {
+    it('Should set the property startDate', () => {
+        const race = new Race('R1');
+        race.start();
+        expect(race.startDate).not.toBeNull();
     });
 });

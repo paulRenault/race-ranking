@@ -34,6 +34,8 @@ class Race {
 
         this.name = name;
         this.categories = categories;
+        this.startDate = null;
+        this.racerTab = [];
     }
 
     /**
@@ -93,6 +95,13 @@ class Race {
             rangesLastIdAreOk
         );
         return result;
+    }
+
+    /**
+     * Start the race & record the start date
+     */
+    start() {
+        this.startDate = new Date();
     }
 }
 
