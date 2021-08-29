@@ -1,13 +1,15 @@
 /**
- * @typedef {Number[]} RangeArray
- * @property {Number} 0 - first id for the category
- * @property {Number} 1 - last id for the category
- */
-
-/**
+ * @typedef {Object} RangeId
+ * @property {Number} firstId - first id for the category
+ * @property {Number} lastId - last id for the category
+ 
  * @typedef {Object} Category
  * @property {String} name - name of the category
- * @property {RangeArray} range - id range to assign racer the category
+ * @property {RangeId} range - id range to assign racer the category
+ * 
+ * @typedef {Object} CategoryError
+ * @property {Boolean} err
+ * @property {String} message - error message
  */
 
 class Race {
@@ -25,24 +27,72 @@ class Race {
             throw 'name is undefined';
         }
 
+        const checkRes = Race.checkCategories(categories);
+        if (checkRes.err) {
+            throw checkRes.message;
+        }
+
+        this.name = name;
+        this.categories = categories;
+    }
+
+    /**
+     * Check if the categories is as expected
+     * @param {Category[]} categories
+     *
+     * @returns {CategoryError}
+     */
+    static checkCategories(categories) {
+        const result = {
+            err: false,
+            message: '',
+        };
+
         const namesAreOk = categories.every((cat) => {
             return 'name' in cat;
         });
 
-        if (!namesAreOk) {
-            throw 'Missing property name in categories parameter';
-        }
+        result.message = namesAreOk
+            ? ''
+            : 'Missing property name in categories parameter';
 
         const rangesAreOk = categories.every((cat) => {
             return 'range' in cat;
         });
 
-        if (!rangesAreOk) {
-            throw 'Missing property range in categories parameter';
+        if (result.message === '' && !rangesAreOk) {
+            result.message = 'Missing property range in categories parameter';
         }
 
-        this.name = name;
-        this.categories = categories;
+        let rangesFirstIdAreOk = true;
+        let rangesLastIdAreOk = true;
+        if (rangesAreOk) {
+            rangesFirstIdAreOk = categories.every((cat) => {
+                return 'firstId' in cat.range;
+            });
+
+            if (result.message === '' && !rangesFirstIdAreOk) {
+                result.message =
+                    'Missing property firstId in categories[].range parameter';
+            }
+
+            rangesLastIdAreOk = categories.every((cat) => {
+                return 'lastId' in cat.range;
+            });
+
+            if (result.message === '' && !rangesLastIdAreOk) {
+                result.message =
+                    'Missing property lastId in categories[].range parameter';
+            }
+        }
+
+        result.err = !(
+            namesAreOk &&
+            rangesAreOk &&
+            rangesFirstIdAreOk &&
+            rangesLastIdAreOk
+        );
+        return result;
     }
 }
 

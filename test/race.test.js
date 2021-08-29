@@ -26,14 +26,14 @@ describe('Test race constructor', () => {
     describe('When param categories is an array of object', () => {
         it('Should property categories equal the expect Object', () => {
             const expectedObj = [
-                { name: 'Cat_1', range: [1, 10] },
-                { name: 'Cat_2', range: [11, 20] },
-                { name: 'Cat_3', range: [21, 30] },
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
             ];
             const categories = [
-                { name: 'Cat_1', range: [1, 10] },
-                { name: 'Cat_2', range: [11, 20] },
-                { name: 'Cat_3', range: [21, 30] },
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
             ];
 
             const race = new Race('R1', categories);
@@ -44,9 +44,9 @@ describe('Test race constructor', () => {
     describe('When one or many object in param categories missing property name', () => {
         it('Should throw an error "Missing property name in categories parameter"', () => {
             const categories = [
-                { name: 'Cat_1', range: [1, 10] },
-                { range: [11, 20] },
-                { name: 'Cat_3', range: [21, 30] },
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                { range: { firstId: 11, lastId: 20 } },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
             ];
             expect(() => {
                 new Race('R1', categories);
@@ -57,13 +57,116 @@ describe('Test race constructor', () => {
     describe('When one or many object in param categories missing property range', () => {
         it('Should throw an error "Missing property range in categories parameter"', () => {
             const categories = [
-                { name: 'Cat_1', range: [1, 10] },
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
                 { name: 'Cat_2' },
-                { name: 'Cat_3', range: [21, 30] },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
             ];
             expect(() => {
                 new Race('R1', categories);
             }).toThrow('Missing property range in categories parameter');
+        });
+    });
+
+    describe('When property firstId is missing in range object', () => {
+        it('Should throw an error "Missing property firstId in categories[].range parameter"', () => {
+            const categories = [
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                { name: 'Cat_2', range: {} },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
+            ];
+
+            expect(() => {
+                new Race('R1', categories);
+            }).toThrow(
+                'Missing property firstId in categories[].range parameter'
+            );
+        });
+    });
+
+    describe('When property lastId is missing in range object', () => {
+        it('Should throw an error "Missing property lastId in categories[].range parameter"', () => {
+            const categories = [
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                { name: 'Cat_2', range: { firstId: 11 } },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
+            ];
+
+            expect(() => {
+                new Race('R1', categories);
+            }).toThrow(
+                'Missing property lastId in categories[].range parameter'
+            );
+        });
+    });
+});
+
+describe('Test static checkCategories', () => {
+    describe("When parameter categories is [{name: 'Cat 1', range: {firstId: 1, lastId:10 }}]", () => {
+        it('Should return the expected object', () => {
+            const categories = [
+                { name: 'Cat 1', range: { firstId: 1, lastId: 10 } },
+            ];
+
+            const expectedObj = {
+                err: false,
+                message: '',
+            };
+
+            expect(Race.checkCategories(categories)).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe('When parameter categories is [range: {firstId: 1, lastId:10 }}]', () => {
+        it('Should return the expected object', () => {
+            const categories = [{ range: { firstId: 1, lastId: 10 } }];
+
+            const expectedObj = {
+                err: true,
+                message: 'Missing property name in categories parameter',
+            };
+
+            expect(Race.checkCategories(categories)).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe("When parameter categories is [{name: 'Cat 1'}]", () => {
+        it('Should return the expected object', () => {
+            const categories = [{ name: 'Cat 1' }];
+
+            const expectedObj = {
+                err: true,
+                message: 'Missing property range in categories parameter',
+            };
+
+            expect(Race.checkCategories(categories)).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe("When parameter categories is [{name: 'Cat 1', range: { lastId:10 }}]", () => {
+        it('Should return the expected object', () => {
+            const categories = [{ name: 'Cat 1', range: { lastId: 10 } }];
+
+            const expectedObj = {
+                err: true,
+                message:
+                    'Missing property firstId in categories[].range parameter',
+            };
+
+            expect(Race.checkCategories(categories)).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe("When parameter categories is [{name: 'Cat 1', range: { firstId:10 }}]", () => {
+        it('Should return the expected object', () => {
+            const categories = [{ name: 'Cat 1', range: { firstId: 10 } }];
+
+            const expectedObj = {
+                err: true,
+                message:
+                    'Missing property lastId in categories[].range parameter',
+            };
+
+            expect(Race.checkCategories(categories)).toStrictEqual(expectedObj);
         });
     });
 });
