@@ -120,6 +120,26 @@ class Race {
         })
         return result ? result : null;
     }
+
+    /**
+     * 
+     * @param {Number|String} id - the racer objet or null
+     * 
+     * @returns {Boolean}
+     */
+    addRacerLoop(id) {
+        if (this.startDate === null) {
+            return false;
+        }
+
+        const racer = this.findRacerForId(id);
+        if (racer) {
+            racer.loopTime.push(new Date());
+        } else {
+            this.racerTab.push({ id, loopTime: [new Date()] });
+        }
+        return true;
+    }
 }
 
 export default Race;
