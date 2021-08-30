@@ -193,15 +193,19 @@ describe('Test race.findRacerForId', () => {
     let race;
     beforeAll(() => {
         race = new Race('R2');
-        race.racerTab = [{ id: 1, loopTime: [] }, { id: 2, loopTime: [] }, { id: 3, loopTime: [] }];
+        race.racerTab = [
+            { id: 1, loopTime: [] },
+            { id: 2, loopTime: [] },
+            { id: 3, loopTime: [] },
+        ];
     });
 
     describe('When the racer does not exist', () => {
         it('Should return null', () => {
             const res = race.findRacerForId(20);
             expect(res).toBeNull();
-        })
-    })
+        });
+    });
 
     describe('When the racer id exist', () => {
         it('Should return the expected object', () => {
@@ -218,7 +222,11 @@ describe('Test race.addRacerLoop', () => {
         beforeEach(() => {
             race = new Race('R1');
             race.start();
-            race.racerTab = [{ id: 1, loopTime: [] }, { id: 2, loopTime: [new Date()] }, { id: 3, loopTime: [] }];
+            race.racerTab = [
+                { id: 1, loopTime: [] },
+                { id: 2, loopTime: [new Date()] },
+                { id: 3, loopTime: [] },
+            ];
         });
 
         describe('When the id does not exist', () => {
@@ -256,7 +264,11 @@ describe('Test race.addRacerLoop', () => {
     describe('When the race is not started', () => {
         beforeEach(() => {
             race = new Race('R1');
-            race.racerTab = [{ id: 1, loopTime: [] }, { id: 2, loopTime: [new Date()] }, { id: 3, loopTime: [] }];
+            race.racerTab = [
+                { id: 1, loopTime: [] },
+                { id: 2, loopTime: [new Date()] },
+                { id: 3, loopTime: [] },
+            ];
         });
 
         it('Should return false', () => {
@@ -264,4 +276,4 @@ describe('Test race.addRacerLoop', () => {
             expect(res).toBe(false);
         });
     });
-})
+});
