@@ -177,6 +177,37 @@ class Race {
         this.categories.push(catObj);
         return true;
     }
+
+    /**
+     *
+     * @param {String} catName
+     */
+    getCategoryForName(catName) {
+        if (!catName) {
+            throw 'catName is invalid';
+        }
+        return this.categories.find((cat) => {
+            return cat.name === catName;
+        });
+    }
+
+    /**
+     *
+     * @param {String} catName
+     *
+     * @returns {Racer[]}
+     */
+    getRacersForCategoryName(catName) {
+        const cat = this.getCategoryForName(catName);
+        if (!cat) {
+            return [];
+        }
+        return this.racerTab.filter((racer) => {
+            return (
+                racer.id >= cat.range.firstId && racer.id <= cat.range.lastId
+            );
+        });
+    }
 }
 
 export default Race;

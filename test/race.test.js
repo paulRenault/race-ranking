@@ -357,3 +357,66 @@ describe('Test race.addCategory', () => {
         });
     });
 });
+
+describe('Test getCategoryForName', () => {
+    let race;
+    beforeAll(() => {
+        const categories = [
+            { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+            { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+        ];
+        race = new Race('R1', categories);
+    });
+    describe('When the category exist', () => {
+        it('Should return the expectedObj', () => {
+            const expectedObj = {
+                name: 'Cat_2',
+                range: { firstId: 11, lastId: 20 },
+            };
+            const res = race.getCategoryForName('Cat_2');
+            expect(res).toStrictEqual(expectedObj);
+        });
+    });
+    describe('When the category does not exist', () => {
+        it('Should retun undefined', () => {
+            const res = race.getCategoryForName('Cat_8');
+            expect(res).toBeUndefined();
+        });
+    });
+    describe('When parameter catName is undefined', () => {
+        it('Should throw an error', () => {
+            expect(() => {
+                race.getCategoryForName();
+            }).toThrow('catName is invalid');
+        });
+    });
+});
+
+describe('Test race.getRacersForCategoryName', () => {
+    let race;
+    beforeAll(() => {
+        const categories = [
+            { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+            { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+        ];
+        race = new Race('R1', categories);
+        race.start();
+        for (let i = 1; i <= 20; i++) {
+            race.addRacerLoop(i);
+        }
+    });
+
+    describe('When parameter catName is Cat_1', () => {
+        it('Should return an array of size 10', () => {
+            const res = race.getRacersForCategoryName('Cat_1');
+            expect(res).toHaveLength(10);
+        });
+    });
+
+    describe('When parameter catName is Cat_8', () => {
+        it('Should return an empty array', () => {
+            const res = race.getRacersForCategoryName('Cat_8');
+            expect(res).toHaveLength(0);
+        });
+    });
+});
