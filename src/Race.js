@@ -109,22 +109,22 @@ class Race {
     }
 
     /**
-     * 
-     * @param {Number|String} id 
-     * 
+     *
+     * @param {Number|String} id
+     *
      * @returns {Racer} - the racer objet or null
      */
     findRacerForId(id) {
         const result = this.racerTab.find((racer) => {
             return racer.id === id;
-        })
+        });
         return result ? result : null;
     }
 
     /**
-     * 
+     *
      * @param {Number|String} id - the racer objet or null
-     * 
+     *
      * @returns {Boolean}
      */
     addRacerLoop(id) {
@@ -138,6 +138,43 @@ class Race {
         } else {
             this.racerTab.push({ id, loopTime: [new Date()] });
         }
+        return true;
+    }
+
+    /**
+     *
+     * @param {String} name
+     * @param {Number} firstId
+     * @param {Number} lastId
+     *
+     * @returns {Boolean}
+     */
+    addCategory(name, firstId, lastId) {
+        if (!name) {
+            throw 'name is invalid';
+        }
+        if (!firstId) {
+            throw 'firstId is invalid';
+        }
+        if (!lastId) {
+            throw 'lastId is invalid';
+        }
+        const catAlreadyExist = this.categories.some((cat) => {
+            return cat.name === name;
+        });
+
+        if (catAlreadyExist) {
+            return false;
+        }
+
+        const catObj = {
+            name,
+            range: {
+                firstId,
+                lastId,
+            },
+        };
+        this.categories.push(catObj);
         return true;
     }
 }

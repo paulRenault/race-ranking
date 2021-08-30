@@ -277,3 +277,83 @@ describe('Test race.addRacerLoop', () => {
         });
     });
 });
+
+describe('Test race.addCategory', () => {
+    let race;
+    beforeEach(() => {
+        race = new Race('R1');
+    });
+
+    describe('When the category not alreadey exist', () => {
+        it('Should add return true', () => {
+            const res = race.addCategory('Cat_1', 1, 10);
+            expect(res).toBe(true);
+        });
+
+        it('Should add the expectObject in categories', () => {
+            const res = race.addCategory('Cat_1', 1, 10);
+            const expectedObj = {
+                name: 'Cat_1',
+                range: {
+                    firstId: 1,
+                    lastId: 10,
+                },
+            };
+            expect(race.categories[0]).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe('When the category already exist', () => {
+        beforeEach(() => {
+            race.addCategory('Cat_1', 1, 10);
+        });
+
+        it('Should return false', () => {
+            const res = race.addCategory('Cat_1', 1, 10);
+            expect(res).toBe(false);
+        });
+
+        it('Should not add another item in the array categories', () => {
+            race.addCategory('Cat_1', 1, 10);
+            expect(race.categories).toHaveLength(1);
+        });
+
+        it('Should not modify first & last id of the already existing category', () => {
+            race.addCategory('Cat_1', 11, 20);
+            expect(race.categories[0].range.firstId).toBe(1);
+            expect(race.categories[0].range.lastId).toBe(10);
+        });
+    });
+
+    describe('When parameter name is undefined', () => {
+        it('Should throw an error', () => {
+            expect(() => {
+                race.addCategory();
+            }).toThrow('name is invalid');
+        });
+    });
+
+    describe('When parameter name is an empty string', () => {
+        it('Should throw an error', () => {
+            expect(() => {
+                race.addCategory('');
+            }).toThrow('name is invalid');
+        });
+    });
+
+    describe('When parameter firstId is undefined', () => {
+        it('Should throw an error', () => {
+            expect(() => {
+                race.addCategory('R1');
+            }).toThrow('firstId is invalid');
+        });
+    });
+
+    describe('When parameter lastId is undefined', () => {
+        it('Should throw an error', () => {
+            expect(() => {
+                race.addCategory('R1', 1);
+            }).toThrow('lastId is invalid');
+        });
+    });
+});
