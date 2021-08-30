@@ -10,6 +10,10 @@
  * @typedef {Object} CategoryError
  * @property {Boolean} err
  * @property {String} message - error message
+ * 
+ * @typedef {Object} Racer
+ * @property {Number|String} id - racer id
+ * @property {Number[]} loopTime - array of loop time
  */
 
 class Race {
@@ -102,6 +106,19 @@ class Race {
      */
     start() {
         this.startDate = new Date();
+    }
+
+    /**
+     * 
+     * @param {Number|String} id 
+     * 
+     * @returns {Racer} - the racer objet or null
+     */
+    findRacerForId(id) {
+        const result = this.racerTab.find((racer) => {
+            return racer.id === id;
+        })
+        return result ? result : null;
     }
 }
 

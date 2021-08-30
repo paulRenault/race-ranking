@@ -188,3 +188,26 @@ describe('Test race.start', () => {
         expect(race.startDate).not.toBeNull();
     });
 });
+
+describe('Test race.findRacerForId', () => {
+    let race;
+    beforeAll(() => {
+        race = new Race('R2');
+        race.racerTab = [{ id: 1, loopTime: [] }, { id: 2, loopTime: [] }, { id: 3, loopTime: [] }];
+    });
+
+    describe('When the racer does not exist', () => {
+        it('Should return null', () => {
+            const res = race.findRacerForId(20);
+            expect(res).toBeNull();
+        })
+    })
+
+    describe('When the racer id exist', () => {
+        it('Should return the expected object', () => {
+            const expectedObj = { id: 3, loopTime: [] };
+            const res = race.findRacerForId(3);
+            expect(res).toStrictEqual(expectedObj);
+        });
+    });
+});
