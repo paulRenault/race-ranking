@@ -1,5 +1,20 @@
 import Race from '../src/Race.js';
 
+function generateRacer(id, diffLaps) {
+    const racer = {
+        id,
+        loopTime: [],
+    };
+
+    for (const diff of diffLaps) {
+        const d = new Date();
+        d.setMinutes(d.getMinutes() - diff);
+        racer.loopTime.push(d);
+    }
+
+    return racer;
+}
+
 describe('Test race constructor', () => {
     describe('When name is race1', () => {
         it('Should set name to race1', () => {
@@ -417,6 +432,119 @@ describe('Test race.getRacersForCategoryName', () => {
         it('Should return an empty array', () => {
             const res = race.getRacersForCategoryName('Cat_8');
             expect(res).toHaveLength(0);
+        });
+    });
+});
+
+describe('Test static sortRacer', () => {
+    describe('When r1 loopTime is longer than r2 loopTime', () => {
+        let r1, r2;
+        beforeAll(() => {
+            const r1Lap1 = new Date();
+            r1Lap1.setMinutes(r1Lap1.getMinutes() - 50);
+
+            const r1Lap2 = new Date();
+            r1Lap2.setMinutes(r1Lap2.getMinutes() - 30);
+
+            const r1Lap3 = new Date();
+            r1Lap3.setMinutes(r1Lap3.getMinutes() - 10);
+
+            const r2Lap1 = new Date();
+            r2Lap1.setMinutes(r2Lap1.getMinutes() - 50);
+
+            const r2Lap2 = new Date();
+            r2Lap2.setMinutes(r2Lap2.getMinutes() - 30);
+
+            r1 = {
+                id: 4,
+                loopTime: [r1Lap1, r1Lap2, r1Lap3],
+            };
+
+            r2 = {
+                id: 2,
+                loopTime: [r2Lap1, r2Lap2],
+            };
+        });
+        it('Should return -1', () => {
+            const res = Race.sortRacer(r1, r2);
+            expect(res).toBe(-1);
+        });
+
+        it('Should return 1', () => {
+            const res = Race.sortRacer(r2, r1);
+            expect(res).toBe(1);
+        });
+    });
+
+    describe('When r1.loopTime.length is equal to r2.loopTime.length', () => {
+        describe('When r1 is fastest than r2', () => {
+            let r1, r2;
+            beforeAll(() => {
+                const r1Lap1 = new Date();
+                r1Lap1.setMinutes(r1Lap1.getMinutes() - 50);
+
+                const r1Lap2 = new Date();
+                r1Lap2.setMinutes(r1Lap2.getMinutes() - 30);
+
+                const r1Lap3 = new Date();
+                r1Lap3.setMinutes(r1Lap3.getMinutes() - 10);
+
+                const r2Lap1 = new Date();
+                r2Lap1.setMinutes(r2Lap1.getMinutes() - 50);
+
+                const r2Lap2 = new Date();
+                r2Lap2.setMinutes(r2Lap2.getMinutes() - 30);
+
+                const r2Lap3 = new Date();
+                r2Lap3.setMinutes(r2Lap3.getMinutes() - 5);
+                r1 = {
+                    id: 4,
+                    loopTime: [r1Lap1, r1Lap2, r1Lap3],
+                };
+
+                r2 = {
+                    id: 2,
+                    loopTime: [r2Lap1, r2Lap2, r2Lap3],
+                };
+            });
+
+            it('Should return -1', () => {
+                const res = Race.sortRacer(r1, r2);
+                expect(res).toBe(-1);
+            });
+
+            it('Should return 1', () => {
+                const res = Race.sortRacer(r2, r1);
+                expect(res).toBe(1);
+            });
+        });
+
+        describe('When r1 & r2 have same time', () => {
+            let r1, r2;
+            beforeAll(() => {
+                const r1Lap1 = new Date();
+                r1Lap1.setMinutes(r1Lap1.getMinutes() - 50);
+
+                const r1Lap2 = new Date();
+                r1Lap2.setMinutes(r1Lap2.getMinutes() - 30);
+
+                const r1Lap3 = new Date();
+                r1Lap3.setMinutes(r1Lap3.getMinutes() - 10);
+                r1 = {
+                    id: 4,
+                    loopTime: [r1Lap1, r1Lap2, r1Lap3],
+                };
+
+                r2 = {
+                    id: 2,
+                    loopTime: [r1Lap1, r1Lap2, r1Lap3],
+                };
+            });
+
+            it('Should return 0', () => {
+                const res = Race.sortRacer(r1, r2);
+                expect(res).toBe(0);
+            });
         });
     });
 });

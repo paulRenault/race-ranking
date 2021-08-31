@@ -208,6 +208,30 @@ class Race {
             );
         });
     }
+
+    /**
+     *
+     * @param {Racer} r1
+     * @param {Racer} r2
+     *
+     * @returns {Number} -1 if r1 is infront of r2, 1 if r2 is infront of r1 & 0 if r1 is equal to r2
+     */
+    static sortRacer(r1, r2) {
+        if (r1.loopTime.length !== r2.loopTime.length) {
+            return r2.loopTime.length - r1.loopTime.length;
+        }
+
+        const lastR1LapTime = r1.loopTime[r1.loopTime.length - 1];
+        const lastR2LapTime = r2.loopTime[r2.loopTime.length - 1];
+
+        if (lastR1LapTime < lastR2LapTime) {
+            return -1;
+        } else if (lastR1LapTime > lastR2LapTime) {
+            return 1;
+        }
+
+        return 0;
+    }
 }
 
 export default Race;
