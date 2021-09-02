@@ -232,6 +232,21 @@ class Race {
 
         return 0;
     }
+
+    /**
+     *
+     * @param {String} catName
+     *
+     * @returns {Racer[]} array of racer order by rank first at position 0, second at position 1 and so on
+     */
+    getRanking(catName) {
+        let rank = this.racerTab;
+        if (catName) {
+            rank = this.getRacersForCategoryName(catName);
+        }
+        rank = rank.sort(Race.sortRacer);
+        return rank;
+    }
 }
 
 export default Race;

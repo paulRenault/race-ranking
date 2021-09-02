@@ -548,3 +548,72 @@ describe('Test static sortRacer', () => {
         });
     });
 });
+
+//TODO : test categories overlapping
+describe('Test getRanking', () => {
+    let race;
+    let racers;
+    beforeEach(() => {
+        const categories = [
+            { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+            { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+            { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
+        ];
+        race = new Race('R1', categories);
+        race.start();
+        racers = [
+            generateRacer(13, [50, 30]), //Cat_2 #5
+            generateRacer(1, [50, 30, 5]), //Cat_1 #3
+            generateRacer(26, [49, 30, 10]), //Cat_3 #1
+            generateRacer(21, [50, 20]), //Cat_3 #6
+            generateRacer(2, [49, 30, 7]), //Cat_1 #2
+            generateRacer(4, [30, 1]), //Cat_1 #8
+            generateRacer(16, [51, 31, 4]), //Cat_2 #4
+            generateRacer(23, [20, 5]), //Cat_3 #7
+            generateRacer(15, [10]), //Cat_2 #9
+        ];
+        race.racerTab = racers;
+    });
+
+    describe('When catName is undefined', () => {
+        it('Should return the expected object', () => {
+            const expectedObj = [
+                racers[2],
+                racers[4],
+                racers[1],
+                racers[6],
+                racers[0],
+                racers[3],
+                racers[7],
+                racers[5],
+                racers[8],
+            ];
+            const res = race.getRanking();
+            expect(res).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe('When catName is Cat_2', () => {
+        it('Should return the expected object', () => {
+            const expectedObj = [racers[6], racers[0], racers[8]];
+            const res = race.getRanking('Cat_2');
+            expect(res).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe('When catName is Cat_1', () => {
+        it('Should return the expected object', () => {
+            const expectedObj = [racers[4], racers[1], racers[5]];
+            const res = race.getRanking('Cat_1');
+            expect(res).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe('When catName is Cat_3', () => {
+        it('Should return the expected object', () => {
+            const expectedObj = [racers[2], racers[3], racers[7]];
+            const res = race.getRanking('Cat_3');
+            expect(res).toStrictEqual(expectedObj);
+        });
+    });
+});
