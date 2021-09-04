@@ -1,4 +1,5 @@
 import Race from '../src/Race.js';
+import _ from 'lodash';
 
 function generateRacer(id, diffLaps) {
     const racer = {
@@ -612,6 +613,167 @@ describe('Test getRanking', () => {
         it('Should return the expected object', () => {
             const expectedObj = [racers[2], racers[3], racers[7]];
             const res = race.getRanking('Cat_3');
+            expect(res).toStrictEqual(expectedObj);
+        });
+    });
+});
+
+describe('Test getStartDate', () => {
+    describe('When the race is not started', () => {
+        it('Should return null', () => {
+            const race = new Race('R1');
+            expect(race.getStartDate()).toBeNull();
+        });
+    });
+
+    describe('When the race is started', () => {
+        it('Should return the start date', () => {
+            const race = new Race('R1');
+            race.start();
+            expect(_.isDate(race.getStartDate())).toBe(true);
+        });
+    });
+});
+
+describe('Test isStarted', () => {
+    describe('When the race is not already started', () => {
+        it('Should return false', () => {
+            const race = new Race('R1');
+            expect(race.isStarted()).toBe(false);
+        });
+    });
+
+    describe('When the race is already started', () => {
+        it('Should return true', () => {
+            const race = new Race('R1');
+            race.start();
+            expect(race.isStarted()).toBe(true);
+        });
+    });
+});
+
+describe('Test getInsertedRacersTab', () => {
+    describe('When the race is not started', () => {
+        it('Should return an empty array', () => {
+            const race = new Race('R1');
+            expect(race.getInsertedRacersTab()).toStrictEqual([]);
+        });
+    });
+
+    describe('When the race is started', () => {
+        let race;
+        let racers;
+        beforeAll(() => {
+            const categories = [
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
+            ];
+            race = new Race('R1', categories);
+            race.start();
+            racers = [
+                generateRacer(13, [50, 31]), //Cat_2 i:0 #5
+                generateRacer(1, [51, 32, 5]), //Cat_1 i:1 #3
+                generateRacer(26, [49, 33, 10]), //Cat_3 i:2 #1
+                generateRacer(21, [52, 20]), //Cat_3 i:3 #6
+                generateRacer(2, [48, 34, 7]), //Cat_1 i:4 #2
+                generateRacer(4, [30, 1]), //Cat_1 i:5 #8
+                generateRacer(16, [53, 35, 4]), //Cat_2 i:6 #4
+                generateRacer(23, [21, 3]), //Cat_3 i:7 #7
+                generateRacer(15, [11]), //Cat_2 i:8 #9
+            ];
+            race.racerTab = racers;
+        });
+
+        it('Should return the expected object', () => {
+            const expectedObj = [
+                {
+                    id: 4,
+                    lapTime: [racers[5].lapTime[1]],
+                },
+                {
+                    id: 23,
+                    lapTime: [racers[7].lapTime[1]],
+                },
+                {
+                    id: 16,
+                    lapTime: [racers[6].lapTime[2]],
+                },
+                {
+                    id: 1,
+                    lapTime: [racers[1].lapTime[2]],
+                },
+                {
+                    id: 2,
+                    lapTime: [racers[4].lapTime[2]],
+                },
+                {
+                    id: 26,
+                    lapTime: [racers[2].lapTime[2]],
+                },
+                {
+                    id: 15,
+                    lapTime: [racers[8].lapTime[0]],
+                },
+                {
+                    id: 21,
+                    lapTime: [racers[3].lapTime[1]],
+                },
+                {
+                    id: 23,
+                    lapTime: [racers[7].lapTime[0]],
+                },
+                {
+                    id: 4,
+                    lapTime: [racers[5].lapTime[0]],
+                },
+                {
+                    id: 13,
+                    lapTime: [racers[0].lapTime[1]],
+                },
+                {
+                    id: 1,
+                    lapTime: [racers[1].lapTime[1]],
+                },
+                {
+                    id: 26,
+                    lapTime: [racers[2].lapTime[1]],
+                },
+                {
+                    id: 2,
+                    lapTime: [racers[4].lapTime[1]],
+                },
+                {
+                    id: 16,
+                    lapTime: [racers[6].lapTime[1]],
+                },
+                {
+                    id: 2,
+                    lapTime: [racers[4].lapTime[0]],
+                },
+                {
+                    id: 26,
+                    lapTime: [racers[2].lapTime[0]],
+                },
+                {
+                    id: 13,
+                    lapTime: [racers[0].lapTime[0]],
+                },
+                {
+                    id: 1,
+                    lapTime: [racers[1].lapTime[0]],
+                },
+                {
+                    id: 21,
+                    lapTime: [racers[3].lapTime[0]],
+                },
+                {
+                    id: 16,
+                    lapTime: [racers[6].lapTime[0]],
+                },
+            ];
+
+            const res = race.getInsertedRacersTab();
             expect(res).toStrictEqual(expectedObj);
         });
     });

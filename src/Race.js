@@ -110,6 +110,21 @@ class Race {
 
     /**
      *
+     * @returns {?Date}
+     */
+    getStartDate() {
+        return this.startDate;
+    }
+
+    /**
+     * @returns {Boolean}
+     */
+    isStarted() {
+        return this.startDate !== null;
+    }
+
+    /**
+     *
      * @param {Number|String} id
      *
      * @returns {Racer} - the racer objet or null
@@ -246,6 +261,28 @@ class Race {
         }
         rank = rank.sort(Race.sortRacer);
         return rank;
+    }
+
+    /**
+     * @returns {Racer[]}
+     */
+    getInsertedRacersTab() {
+        if (!this.isStarted()) {
+            return [];
+        }
+
+        const insertedRacers = this.racerTab.flatMap((racer) => {
+            return racer.lapTime.map((lapTime) => {
+                return {
+                    id: racer.id,
+                    lapTime: [lapTime],
+                };
+            });
+        });
+
+        const sortedInsertedRacers = insertedRacers.sort(Race.sortRacer);
+
+        return sortedInsertedRacers.reverse();
     }
 }
 
