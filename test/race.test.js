@@ -3,13 +3,13 @@ import Race from '../src/Race.js';
 function generateRacer(id, diffLaps) {
     const racer = {
         id,
-        loopTime: [],
+        lapTime: [],
     };
 
     for (const diff of diffLaps) {
         const d = new Date();
         d.setMinutes(d.getMinutes() - diff);
-        racer.loopTime.push(d);
+        racer.lapTime.push(d);
     }
 
     return racer;
@@ -209,9 +209,9 @@ describe('Test race.findRacerForId', () => {
     beforeAll(() => {
         race = new Race('R2');
         race.racerTab = [
-            { id: 1, loopTime: [] },
-            { id: 2, loopTime: [] },
-            { id: 3, loopTime: [] },
+            { id: 1, lapTime: [] },
+            { id: 2, lapTime: [] },
+            { id: 3, lapTime: [] },
         ];
     });
 
@@ -224,53 +224,53 @@ describe('Test race.findRacerForId', () => {
 
     describe('When the racer id exist', () => {
         it('Should return the expected object', () => {
-            const expectedObj = { id: 3, loopTime: [] };
+            const expectedObj = { id: 3, lapTime: [] };
             const res = race.findRacerForId(3);
             expect(res).toStrictEqual(expectedObj);
         });
     });
 });
 
-describe('Test race.addRacerLoop', () => {
+describe('Test race.addRacerLap', () => {
     let race;
     describe('When the race is started', () => {
         beforeEach(() => {
             race = new Race('R1');
             race.start();
             race.racerTab = [
-                { id: 1, loopTime: [] },
-                { id: 2, loopTime: [new Date()] },
-                { id: 3, loopTime: [] },
+                { id: 1, lapTime: [] },
+                { id: 2, lapTime: [new Date()] },
+                { id: 3, lapTime: [] },
             ];
         });
 
         describe('When the id does not exist', () => {
             it('Should return true', () => {
-                const res = race.addRacerLoop(8);
+                const res = race.addRacerLap(8);
                 expect(res).toBe(true);
             });
             it('Should add it in racerTab', () => {
-                race.addRacerLoop(8);
+                race.addRacerLap(8);
                 const res = race.findRacerForId(8);
                 expect(res).not.toBeNull();
             });
 
-            it('Should have add an item in the racer loopTime array', () => {
-                race.addRacerLoop(8);
+            it('Should have add an item in the racer lapTime array', () => {
+                race.addRacerLap(8);
                 const res = race.findRacerForId(8);
-                expect(res.loopTime).toHaveLength(1);
+                expect(res.lapTime).toHaveLength(1);
             });
         });
 
         describe('When the id exist', () => {
-            it('Should add an item in the racer loopTime array', () => {
-                race.addRacerLoop(2);
+            it('Should add an item in the racer lapTime array', () => {
+                race.addRacerLap(2);
                 const res = race.findRacerForId(2);
-                expect(res.loopTime).toHaveLength(2);
+                expect(res.lapTime).toHaveLength(2);
             });
 
             it('Should return true', () => {
-                const res = race.addRacerLoop(2);
+                const res = race.addRacerLap(2);
                 expect(res).toBe(true);
             });
         });
@@ -280,14 +280,14 @@ describe('Test race.addRacerLoop', () => {
         beforeEach(() => {
             race = new Race('R1');
             race.racerTab = [
-                { id: 1, loopTime: [] },
-                { id: 2, loopTime: [new Date()] },
-                { id: 3, loopTime: [] },
+                { id: 1, lapTime: [] },
+                { id: 2, lapTime: [new Date()] },
+                { id: 3, lapTime: [] },
             ];
         });
 
         it('Should return false', () => {
-            const res = race.addRacerLoop(2);
+            const res = race.addRacerLap(2);
             expect(res).toBe(false);
         });
     });
@@ -417,7 +417,7 @@ describe('Test race.getRacersForCategoryName', () => {
         race = new Race('R1', categories);
         race.start();
         for (let i = 1; i <= 20; i++) {
-            race.addRacerLoop(i);
+            race.addRacerLap(i);
         }
     });
 
@@ -437,7 +437,7 @@ describe('Test race.getRacersForCategoryName', () => {
 });
 
 describe('Test static sortRacer', () => {
-    describe('When r1 loopTime is longer than r2 loopTime', () => {
+    describe('When r1 lapTime is longer than r2 lapTime', () => {
         let r1, r2;
         beforeAll(() => {
             const r1Lap1 = new Date();
@@ -457,12 +457,12 @@ describe('Test static sortRacer', () => {
 
             r1 = {
                 id: 4,
-                loopTime: [r1Lap1, r1Lap2, r1Lap3],
+                lapTime: [r1Lap1, r1Lap2, r1Lap3],
             };
 
             r2 = {
                 id: 2,
-                loopTime: [r2Lap1, r2Lap2],
+                lapTime: [r2Lap1, r2Lap2],
             };
         });
         it('Should return -1', () => {
@@ -476,7 +476,7 @@ describe('Test static sortRacer', () => {
         });
     });
 
-    describe('When r1.loopTime.length is equal to r2.loopTime.length', () => {
+    describe('When r1.lapTime.length is equal to r2.lapTime.length', () => {
         describe('When r1 is fastest than r2', () => {
             let r1, r2;
             beforeAll(() => {
@@ -499,12 +499,12 @@ describe('Test static sortRacer', () => {
                 r2Lap3.setMinutes(r2Lap3.getMinutes() - 5);
                 r1 = {
                     id: 4,
-                    loopTime: [r1Lap1, r1Lap2, r1Lap3],
+                    lapTime: [r1Lap1, r1Lap2, r1Lap3],
                 };
 
                 r2 = {
                     id: 2,
-                    loopTime: [r2Lap1, r2Lap2, r2Lap3],
+                    lapTime: [r2Lap1, r2Lap2, r2Lap3],
                 };
             });
 
@@ -532,12 +532,12 @@ describe('Test static sortRacer', () => {
                 r1Lap3.setMinutes(r1Lap3.getMinutes() - 10);
                 r1 = {
                     id: 4,
-                    loopTime: [r1Lap1, r1Lap2, r1Lap3],
+                    lapTime: [r1Lap1, r1Lap2, r1Lap3],
                 };
 
                 r2 = {
                     id: 2,
-                    loopTime: [r1Lap1, r1Lap2, r1Lap3],
+                    lapTime: [r1Lap1, r1Lap2, r1Lap3],
                 };
             });
 
@@ -549,7 +549,6 @@ describe('Test static sortRacer', () => {
     });
 });
 
-//TODO : test categories overlapping
 describe('Test getRanking', () => {
     let race;
     let racers;

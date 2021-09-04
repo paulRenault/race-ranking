@@ -13,7 +13,7 @@
  * 
  * @typedef {Object} Racer
  * @property {Number|String} id - racer id
- * @property {Number[]} loopTime - array of loop time
+ * @property {Number[]} lapTime - array of lap time
  */
 
 class Race {
@@ -127,16 +127,16 @@ class Race {
      *
      * @returns {Boolean}
      */
-    addRacerLoop(id) {
+    addRacerLap(id) {
         if (this.startDate === null) {
             return false;
         }
 
         const racer = this.findRacerForId(id);
         if (racer) {
-            racer.loopTime.push(new Date());
+            racer.lapTime.push(new Date());
         } else {
-            this.racerTab.push({ id, loopTime: [new Date()] });
+            this.racerTab.push({ id, lapTime: [new Date()] });
         }
         return true;
     }
@@ -217,12 +217,12 @@ class Race {
      * @returns {Number} -1 if r1 is infront of r2, 1 if r2 is infront of r1 & 0 if r1 is equal to r2
      */
     static sortRacer(r1, r2) {
-        if (r1.loopTime.length !== r2.loopTime.length) {
-            return r2.loopTime.length - r1.loopTime.length;
+        if (r1.lapTime.length !== r2.lapTime.length) {
+            return r2.lapTime.length - r1.lapTime.length;
         }
 
-        const lastR1LapTime = r1.loopTime[r1.loopTime.length - 1];
-        const lastR2LapTime = r2.loopTime[r2.loopTime.length - 1];
+        const lastR1LapTime = r1.lapTime[r1.lapTime.length - 1];
+        const lastR2LapTime = r2.lapTime[r2.lapTime.length - 1];
 
         if (lastR1LapTime < lastR2LapTime) {
             return -1;
