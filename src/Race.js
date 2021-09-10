@@ -2,15 +2,19 @@
  * @typedef {Object} RangeId
  * @property {Number} firstId - first id for the category
  * @property {Number} lastId - last id for the category
- 
+ */
+
+/**
  * @typedef {Object} Category
  * @property {String} name - name of the category
  * @property {RangeId} range - id range to assign racer the category
- * 
+ */
+
+/**
  * @typedef {Object} CategoryError
  * @property {Boolean} err
  * @property {String} message - error message
- * 
+ *
  * @typedef {Object} Racer
  * @property {Number|String} id - racer id
  * @property {Number[]} lapTime - array of lap time
