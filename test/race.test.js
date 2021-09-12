@@ -778,3 +778,71 @@ describe('Test getInsertedRacersTab', () => {
         });
     });
 });
+
+describe('Test toString', () => {
+    describe('When the race is not start', () => {
+        describe('When categories is empty', () => {
+            it('Should return the expected string', () => {
+                const expectString =
+                    '{"name":"R1","categories":[],"startDate":"","racerTab":[]}';
+                const race = new Race('R1');
+                const res = race.toString();
+                expect(res).toStrictEqual(expectString);
+            });
+        });
+
+        describe('When categories is not empty', () => {
+            it('Should return the expected string', () => {
+                const categories = [
+                    { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                    { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+                    { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
+                ];
+                const race = new Race('R1', categories);
+                const expectString =
+                    '{"name":"R1","categories":[{"name":"Cat_1","range":{"firstId":1,"lastId":10}},{"name":"Cat_2","range":{"firstId":11,"lastId":20}},{"name":"Cat_3","range":{"firstId":21,"lastId":30}}],"startDate":"","racerTab":[]}';
+                const res = race.toString();
+                expect(res).toStrictEqual(expectString);
+            });
+        });
+    });
+
+    describe('When the race is started', () => {
+        describe('When there is no racers yet', () => {
+            it('Should return the expected string', () => {
+                const categories = [
+                    { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                    { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+                    { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
+                ];
+                const race = new Race('R1', categories);
+                race.start();
+                const startDate = race.getStartDate();
+                const isoDate = startDate.toISOString();
+                const expectString = `{"name":"R1","categories":[{"name":"Cat_1","range":{"firstId":1,"lastId":10}},{"name":"Cat_2","range":{"firstId":11,"lastId":20}},{"name":"Cat_3","range":{"firstId":21,"lastId":30}}],"startDate":"${isoDate}","racerTab":[]}`;
+                const res = race.toString();
+                expect(res).toStrictEqual(expectString);
+            });
+        });
+
+        describe('When there are racers', () => {
+            const categories = [
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
+            ];
+            const race = new Race('R1', categories);
+            race.start();
+            const startDate = race.getStartDate();
+            const isoDate = startDate.toISOString();
+            const r1l1 = new Date();
+            r1l1.setSeconds(r1l1.getSeconds() - 20);
+            race.racerTab.push({ id: 2, lapTime: [r1l1] });
+            const r2l1 = new Date();
+            race.racerTab.push({ id: 1, lapTime: [r2l1] });
+            const expectString = `{"name":"R1","categories":[{"name":"Cat_1","range":{"firstId":1,"lastId":10}},{"name":"Cat_2","range":{"firstId":11,"lastId":20}},{"name":"Cat_3","range":{"firstId":21,"lastId":30}}],"startDate":"${isoDate}","racerTab":[{"id":2,"lapTime":["${r1l1.toISOString()}"]},{"id":1,"lapTime":["${r2l1.toISOString()}"]}]}`;
+            const res = race.toString();
+            expect(res).toStrictEqual(expectString);
+        });
+    });
+});

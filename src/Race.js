@@ -288,6 +288,18 @@ class Race {
 
         return sortedInsertedRacers.reverse();
     }
+
+    /**
+     * @return {String}
+     */
+
+    toString() {
+        const tmp = { ...this };
+        if (!tmp.startDate) {
+            tmp.startDate = '';
+        }
+        return JSON.stringify(tmp);
+    }
 }
 
 export default Race;
