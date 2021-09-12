@@ -290,7 +290,7 @@ class Race {
     }
 
     /**
-     * @return {String}
+     * @returns {String}
      */
 
     toString() {
@@ -299,6 +299,42 @@ class Race {
             tmp.startDate = '';
         }
         return JSON.stringify(tmp);
+    }
+
+    /**
+     * @param {String} data
+     * @returns {Race}
+     *
+     * @throws Not a parceable string
+     */
+    static parseToRace(data) {
+        try {
+            const raceObj = JSON.parse(data);
+            if (!('name' in raceObj)) {
+                throw 'Miss property name';
+            }
+            const race = new Race(raceObj.name, raceObj.categories);
+            race.startDate =
+                'startDate' in raceObj && raceObj.startDate !== ''
+                    ? new Date(raceObj.startDate)
+                    : null;
+            if ('racerTab' in raceObj) {
+                race.racerTab = raceObj.racerTab.map((racer) => {
+                    return {
+                        id: racer.id,
+                        lapTime: racer.lapTime.map((lap) => {
+                            return new Date(lap);
+                        }),
+                    };
+                });
+            } else {
+                race.racerTab = [];
+            }
+            return race;
+        } catch (e) {
+            if (e instanceof SyntaxError) throw 'Not a parceable string';
+            else throw e;
+        }
     }
 }
 

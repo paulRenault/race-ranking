@@ -846,3 +846,83 @@ describe('Test toString', () => {
         });
     });
 });
+
+describe('Test parseToRace', () => {
+    describe('When the string is parceable', () => {
+        const raceStr = `{"name":"R1","categories":[{"name":"Cat_1","range":{"firstId":1,"lastId":10}},{"name":"Cat_2","range":{"firstId":11,"lastId":20}},{"name":"Cat_3","range":{"firstId":21,"lastId":30}}],"startDate":"2021-09-12T15:13:32.400Z","racerTab":[{"id":2,"lapTime":["2021-09-12T15:33:32.400Z"]},{"id":1,"lapTime":["2021-09-12T15:35:33.400Z"]}]}`;
+        it('Should property name equal R1', () => {
+            const res = Race.parseToRace(raceStr);
+            expect(res.name).toBe('R1');
+        });
+
+        it('Should startDate equal expectedDate', () => {
+            const expectedDate = new Date('2021-09-12T15:13:32.400Z');
+            const res = Race.parseToRace(raceStr);
+            expect(res.startDate).toStrictEqual(expectedDate);
+        });
+
+        it('Should categories equal expected object', () => {
+            const expectedObj = [
+                { name: 'Cat_1', range: { firstId: 1, lastId: 10 } },
+                { name: 'Cat_2', range: { firstId: 11, lastId: 20 } },
+                { name: 'Cat_3', range: { firstId: 21, lastId: 30 } },
+            ];
+            const res = Race.parseToRace(raceStr);
+            expect(res.categories).toStrictEqual(expectedObj);
+        });
+
+        it('Should racerTab equal expected object', () => {
+            const expectedObj = [
+                { id: 2, lapTime: [new Date('2021-09-12T15:33:32.400Z')] },
+                { id: 1, lapTime: [new Date('2021-09-12T15:35:33.400Z')] },
+            ];
+            const res = Race.parseToRace(raceStr);
+            expect(res.racerTab).toStrictEqual(expectedObj);
+        });
+    });
+
+    describe('When startDate is empty', () => {
+        const raceStr = `{"name":"R1","categories":[{"name":"Cat_1","range":{"firstId":1,"lastId":10}},{"name":"Cat_2","range":{"firstId":11,"lastId":20}},{"name":"Cat_3","range":{"firstId":21,"lastId":30}}],"startDate":"","racerTab":[{"id":2,"lapTime":["2021-09-12T15:33:32.400Z"]},{"id":1,"lapTime":["2021-09-12T15:35:33.400Z"]}]}`;
+        it('Should startDate equal expectedDate', () => {
+            const res = Race.parseToRace(raceStr);
+            expect(res.startDate).toBeNull();
+        });
+    });
+
+    describe('When data is not parceable string', () => {
+        it('Should throw an error', () => {
+            expect(() => {
+                Race.parseToRace('test');
+            }).toThrow('Not a parceable string');
+        });
+    });
+
+    describe('When property name is missing in string to parse', () => {
+        it('Should throw an error', () => {
+            expect(() => {
+                Race.parseToRace('{"categories":[]}');
+            }).toThrow('Miss property name');
+        });
+    });
+
+    describe('When property startDate is missing in string to parse', () => {
+        it('Should throw an error', () => {
+            const res = Race.parseToRace('{"name":"R1"}');
+            expect(res.startDate).toBeNull();
+        });
+    });
+
+    describe('When property categories is missing in string to parse', () => {
+        it('Should throw an error', () => {
+            const res = Race.parseToRace('{"name":"R1"}');
+            expect(res.categories).toStrictEqual([]);
+        });
+    });
+
+    describe('When property racerTab is missing in string to parse', () => {
+        it('Should throw an error', () => {
+            const res = Race.parseToRace('{"name":"R1"}');
+            expect(res.racerTab).toStrictEqual([]);
+        });
+    });
+});
